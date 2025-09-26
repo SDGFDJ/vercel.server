@@ -1,5 +1,6 @@
 import ProductModel from "../models/product.model.js";
 
+// CREATE PRODUCT
 export const createProductController = async (request, response) => {
   try {
     const {
@@ -53,6 +54,7 @@ export const createProductController = async (request, response) => {
   }
 };
 
+// GET ALL PRODUCTS
 export const getProductController = async (request, response) => {
   try {
     let { page, limit, search } = request.body;
@@ -96,6 +98,7 @@ export const getProductController = async (request, response) => {
   }
 };
 
+// GET PRODUCTS BY CATEGORY
 export const getProductByCategory = async (request, response) => {
   try {
     const { id } = request.body;
@@ -127,6 +130,7 @@ export const getProductByCategory = async (request, response) => {
   }
 };
 
+// GET PRODUCTS BY CATEGORY + SUBCATEGORY
 export const getProductByCategoryAndSubCategory = async (request, response) => {
   try {
     let { categoryId, subCategoryId, page, limit } = request.body;
@@ -170,6 +174,7 @@ export const getProductByCategoryAndSubCategory = async (request, response) => {
   }
 };
 
+// GET PRODUCT DETAILS
 export const getProductDetails = async (request, response) => {
   try {
     const { productId } = request.body;
@@ -190,6 +195,7 @@ export const getProductDetails = async (request, response) => {
   }
 };
 
+// UPDATE PRODUCT
 export const updateProductDetails = async (request, response) => {
   try {
     const { _id } = request.body;
@@ -219,6 +225,7 @@ export const updateProductDetails = async (request, response) => {
   }
 };
 
+// DELETE PRODUCT
 export const deleteProductDetails = async (request, response) => {
   try {
     const { _id } = request.body;
@@ -248,6 +255,7 @@ export const deleteProductDetails = async (request, response) => {
   }
 };
 
+// SEARCH PRODUCT
 export const searchProduct = async (request, response) => {
   try {
     let { search, page, limit } = request.body;
@@ -283,6 +291,65 @@ export const searchProduct = async (request, response) => {
       totalPage: Math.ceil(dataCount / limit),
       page,
       limit,
+    });
+  } catch (error) {
+    return response.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+// ✅ RELATED PRODUCTS CONTROLLER
+export const getRelatedProductsController = async (request, response) => {
+  try {
+    const { categoryId, subCategoryId, currentProductId } = request.body;
+
+    if (!categoryId || !subCategoryId) {
+      return response.status(400).json({
+        message: "Provide categoryId and subCategoryId",
+        error: true,
+        success: false,
+      });
+    }
+
+    const products = await ProductModel.find({
+      category: categoryId,
+      subCategory: subCategoryId,
+      _id: { $ne: currentProductId },
+    }).limit(8);
+
+    return response.json({
+      message: "Related products fetched",
+      data: products,
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return response.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+// ✅ OTHER CATEGORY PRODUCTS CONTROLLER
+export const getOtherCategoryProductsController = async (request, response) => {
+  try {
+    const { excludeCategoryId, limit } = request.body;
+    const fetchLimit = Number(limit) || 8;
+
+    const products = await ProductModel.find({
+      category: { $ne: excludeCategoryId }
+    }).limit(fetchLimit);
+
+    return response.json({
+      message: "Other category products fetched",
+      data: products,
+      error: false,
+      success: true,
     });
   } catch (error) {
     return response.status(500).json({
