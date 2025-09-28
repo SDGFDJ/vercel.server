@@ -19,6 +19,8 @@ import addressRouter from './route/address.route.js';
 import orderRouter from './route/order.route.js';
 import { setupOrderCleanup } from './utils/orderCleanup.js'; // correct path
 import notificationRouter from "./route/notification.route.js";
+import wishlistRouter from "./route/wishlist.route.js";
+
 
 const app = express();
 
@@ -71,6 +73,8 @@ app.use("/api/cart", cartRouter);
 app.use("/api/address", addressRouter);
 app.use("/api/notification", notificationRouter);
 app.use('/api/order', orderRouter);
+app.use("/api/wishlist", wishlistRouter);
+
 
 // -------------------- DATABASE & SERVER --------------------
 const PORT = process.env.PORT || 8080;
