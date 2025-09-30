@@ -4,9 +4,7 @@ import OrderModel from "../models/order.model.js";
 import UserModel from "../models/user.model.js";
 import AddressModel from "../models/address.model.js";
 
-const generateOrderId = () => {
-  return "ORD-" + Math.floor(10000000 + Math.random() * 90000000);
-};
+const generateOrderId = () => "ORD-" + Math.floor(10000000 + Math.random() * 90000000);
 
 export const priceWithDiscount = (price, dis = 0) => {
   const discountAmount = Math.ceil((Number(price) * Number(dis)) / 100);
@@ -37,7 +35,6 @@ export async function CashOnDeliveryOrderController(req, res) {
       mobile: address.mobile || ""
     };
 
-    // ✅ सही price calculation
     const productDetails = list_items.map(el => {
       const price = priceWithDiscount(el.productId?.price || 0, el.productId?.discount || 0);
       const quantity = el.quantity || 1;
@@ -51,9 +48,7 @@ export async function CashOnDeliveryOrderController(req, res) {
       };
     });
 
-    const totalAmt = Number(
-      productDetails.reduce((sum, item) => sum + Number(item.subTotalAmt), 0).toFixed(2)
-    );
+    const totalAmt = Number(productDetails.reduce((sum, item) => sum + Number(item.subTotalAmt), 0).toFixed(2));
 
     const order = {
       userId,
@@ -117,7 +112,7 @@ export async function paymentController(req, res) {
             images: item.productId?.image || [],
             metadata: { productId: item.productId?._id || "" }
           },
-          unit_amount: Math.round(price * 100), // ✅ per unit price in paise
+          unit_amount: Math.round(price * 100),
         },
         adjustable_quantity: { enabled: true, minimum: 1 },
         quantity: item.quantity || 1
@@ -208,7 +203,7 @@ export async function webhookStripe(req, res) {
     res.status(500).json({ success: false, message: error.message || "Webhook error" });
   }
 }
-
+// ===================== GET ORDER DETAILS =====================
 export async function getOrderDetailsController(req, res) {
   try {
     const user = await UserModel.findById(req.userId);
@@ -216,12 +211,16 @@ export async function getOrderDetailsController(req, res) {
 
     let orderlist;
     if (user.role === "ADMIN") {
-      orderlist = await OrderModel.find().sort({ createdAt: -1 }).populate('userId', 'name email mobile').lean();
+      // Admin sees all orders
+      orderlist = await OrderModel.find()
+        .sort({ createdAt: -1 })
+        .populate('userId', 'name email mobile')
+        .lean();
     } else {
-      orderlist = await OrderModel.find({ 
-        userId: user._id, 
-        payment_status: { $nin: ["CANCELLED", "COMPLETED"] } 
-      }).sort({ createdAt: -1 }).lean();
+      // User sees all their orders (INCLUDING DELIVERED & CANCELLED)
+      orderlist = await OrderModel.find({ userId: user._id })
+        .sort({ createdAt: -1 })
+        .lean();
     }
 
     orderlist = orderlist.map(order => ({
@@ -244,6 +243,7 @@ export async function getOrderDetailsController(req, res) {
   }
 }
 
+// ===================== CANCEL ORDER =====================
 export const cancelOrderController = async (req, res) => {
   try {
     const { orderId } = req.body;
@@ -260,19 +260,15 @@ export const cancelOrderController = async (req, res) => {
     order.statusHistory.push({ status: "CANCELLED", updatedAt: new Date() });
     await order.save();
 
-    setTimeout(async () => {
-      await OrderModel.deleteOne({ _id: order._id });
-      console.log(`Order ${order.orderId} permanently deleted after 10 minutes.`);
-    }, 10 * 60 * 1000);
-
-    res.status(200).json({ success: true, message: "Order cancelled successfully (will delete after 10 min)", order });
-
+    // ✅ Removed deletion after 10 minutes
+    res.status(200).json({ success: true, message: "Order cancelled successfully", order });
   } catch (error) {
     console.error("Cancel Order Error:", error);
     res.status(500).json({ success: false, message: error.message || "Something went wrong" });
   }
-};
+}
 
+// ===================== UPDATE ORDER STATUS =====================
 export const updateOrderStatusController = async (req, res) => {
   try {
     const { orderId, status } = req.body;
@@ -289,21 +285,15 @@ export const updateOrderStatusController = async (req, res) => {
 
     await order.save();
 
-    if (status === "CANCELLED") {
-      setTimeout(async () => {
-        await OrderModel.deleteOne({ _id: order._id });
-        console.log(`Order ${order.orderId} permanently deleted after 10 minutes.`);
-      }, 10 * 60 * 1000);
-    }
-
+    // ✅ Removed deletion after 10 minutes
     res.json({ success: true, message: `Order status updated to ${status}`, data: order });
-
   } catch (error) {
     console.error("Update Order Status Error:", error);
     res.status(500).json({ success: false, message: error.message || "Something went wrong" });
   }
 };
 
+// ===================== GET ALL ORDERS (ADMIN) =====================
 export async function getAllOrdersController(req, res) {
   try {
     const user = await UserModel.findById(req.userId);
