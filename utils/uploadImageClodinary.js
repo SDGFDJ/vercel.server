@@ -32,5 +32,22 @@ const uploadImageCloudinary = async (filePath) => {
     throw new Error("Cloudinary upload failed: " + error.message);
   }
 };
+// Upload from buffer
+export async function uploadImageCloudinaryFromBuffer(buffer, folder = "avatars") {
+  return new Promise((resolve, reject) => {
+    if (!buffer) return reject(new Error("No buffer provided"));
+
+    const stream = cloudinary.uploader.upload_stream(
+      { folder, resource_type: "auto" },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    );
+
+    stream.end(buffer);
+  });
+}
+
 
 export default uploadImageCloudinary;

@@ -4,7 +4,7 @@ import bcryptjs from 'bcryptjs'
 import verifyEmailTemplate from '../utils/verifyEmailTemplate.js'
 import generatedAccessToken from '../utils/generatedAccessToken.js'
 import genertedRefreshToken from '../utils/generatedRefreshToken.js'
-import uploadImageClodinary from '../utils/uploadImageClodinary.js'
+import { uploadImageCloudinaryFromBuffer }  from '../utils/uploadImageClodinary.js'
 import generatedOtp from '../utils/generatedOtp.js'
 import forgotPasswordTemplate from '../utils/forgotPasswordTemplate.js'
 import jwt from 'jsonwebtoken'
@@ -212,35 +212,27 @@ export async function logoutController(request,response){
     }
 }
 
-//upload user avatar
-export async  function uploadAvatar(request,response){
-    try {
-        const userId = request.userId // auth middlware
-        const image = request.file  // multer middleware
+export async function uploadAvatar(request, response) {
+  try {
+    const userId = request.userId;
+    const file = request.file;
 
-        const upload = await uploadImageClodinary(image)
-        
-        const updateUser = await UserModel.findByIdAndUpdate(userId,{
-            avatar : upload.url
-        })
+    if (!file) return response.status(400).json({ message: "No file uploaded", success: false });
 
-        return response.json({
-            message : "upload profile",
-            success : true,
-            error : false,
-            data : {
-                _id : userId,
-                avatar : upload.url
-            }
-        })
+    const upload = await uploadImageCloudinaryFromBuffer(file.buffer, "avatars");
 
-    } catch (error) {
-        return response.status(500).json({
-            message : error.message || error,
-            error : true,
-            success : false
-        })
-    }
+    await UserModel.findByIdAndUpdate(userId, { avatar: upload.secure_url });
+
+    return response.json({
+      message: "Profile uploaded successfully",
+      success: true,
+      error: false,
+      data: { _id: userId, avatar: upload.secure_url }
+    });
+
+  } catch (error) {
+    return response.status(500).json({ message: error.message, success: false, error: true });
+  }
 }
 
 //update user details
