@@ -20,9 +20,7 @@ import orderRouter from './route/order.route.js';
 import { setupOrderCleanup } from './utils/orderCleanup.js';
 import notificationRouter from "./route/notification.route.js";
 import wishlistRouter from "./route/wishlist.route.js";
-
-// ✅ New Review Route
-import reviewRouter from './route/review.route.js'; // create this file as explained
+import reviewRouter from './route/review.route.js';
 
 const app = express();
 
@@ -38,10 +36,8 @@ const io = new Server(server, {
     },
 });
 
-// Store io instance in app for controllers
 app.set("io", io);
 
-// Listen for connection
 io.on("connection", (socket) => {
     console.log("A user connected: ", socket.id);
 
@@ -57,8 +53,9 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // ✅ for form submissions
 app.use(cookieParser());
-app.use(morgan());
+app.use(morgan('dev'));
 app.use(helmet({ crossOriginResourcePolicy: false }));
 
 // -------------------- ROUTES --------------------
@@ -76,16 +73,18 @@ app.use("/api/address", addressRouter);
 app.use("/api/notification", notificationRouter);
 app.use('/api/order', orderRouter);
 app.use("/api/wishlist", wishlistRouter);
-
-// ✅ Add review route
 app.use("/api/review", reviewRouter);
 
 // -------------------- DATABASE & SERVER --------------------
 const PORT = process.env.PORT || 8080;
 
-connectDB().then(() => {
-    server.listen(PORT, () => {
-        console.log("Server is running on port", PORT);
-        setupOrderCleanup();
+connectDB()
+    .then(() => {
+        server.listen(PORT, () => {
+            console.log("Server is running on port", PORT);
+            setupOrderCleanup();
+        });
+    })
+    .catch((err) => {
+        console.error("Database connection failed:", err);
     });
-});

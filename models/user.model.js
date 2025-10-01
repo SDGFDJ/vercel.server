@@ -7,16 +7,20 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: [true, "provide email"],
+        required: [true, "Provide email"],
         unique: true
     },
     password: {
         type: String,
-        required: [true, "provide password"]
+        default: "" // Optional for Google login users
     },
     avatar: {
         type: String,
         default: ""
+    },
+    googleId: {
+        type: String,
+        default: "" // Store Google ID for OAuth users
     },
     mobile: {
         type: Number,
@@ -57,7 +61,6 @@ const userSchema = new mongoose.Schema({
             ref: 'order'
         }
     ],
-    // ✅ Wishlist added here
     wishlist: [
         {
             type: mongoose.Schema.ObjectId,
