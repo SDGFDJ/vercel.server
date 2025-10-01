@@ -17,10 +17,12 @@ import productRouter from './route/product.route.js';
 import cartRouter from './route/cart.route.js';
 import addressRouter from './route/address.route.js';
 import orderRouter from './route/order.route.js';
-import { setupOrderCleanup } from './utils/orderCleanup.js'; // correct path
+import { setupOrderCleanup } from './utils/orderCleanup.js';
 import notificationRouter from "./route/notification.route.js";
 import wishlistRouter from "./route/wishlist.route.js";
 
+// ✅ New Review Route
+import reviewRouter from './route/review.route.js'; // create this file as explained
 
 const app = express();
 
@@ -75,6 +77,8 @@ app.use("/api/notification", notificationRouter);
 app.use('/api/order', orderRouter);
 app.use("/api/wishlist", wishlistRouter);
 
+// ✅ Add review route
+app.use("/api/review", reviewRouter);
 
 // -------------------- DATABASE & SERVER --------------------
 const PORT = process.env.PORT || 8080;
