@@ -8,6 +8,9 @@ const reviewSchema = new mongoose.Schema({
   rating: { type: Number, required: true, min: 1, max: 5 },
   comment: { type: String, default: '' },
   createdAt: { type: Date, default: Date.now },
+  averageRating: { type: Number, default: 0 },
+totalReviews: { type: Number, default: 0 },
+
 });
 
 const Review = mongoose.model('Review', reviewSchema);
