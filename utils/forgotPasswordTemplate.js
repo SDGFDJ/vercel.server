@@ -27,7 +27,7 @@ const forgotPasswordTemplate = ({ name, otp }) => {
       <table cellspacing="0" cellpadding="0" border="0" align="center">
         <tr>
           <td align="center" bgcolor="#1e88e5" style="border-radius:5px;">
-            <a href="https://nexebay.com/login" target="_blank" style="display:inline-block; padding:12px 25px; font-size:16px; color:#fff; text-decoration:none; font-weight:bold; border-radius:5px;">
+            <a href="https://www.nexebay.com/verification-otp" target="_blank" style="display:inline-block; padding:12px 25px; font-size:16px; color:#fff; text-decoration:none; font-weight:bold; border-radius:5px;">
               Go to Login
             </a>
           </td>
