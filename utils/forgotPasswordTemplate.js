@@ -4,7 +4,7 @@ const forgotPasswordTemplate = ({ name, otp }) => {
     
     <!-- Logo -->
     <div style="text-align:center; margin-bottom:20px;">
-      <img src="client/public/LOGO3.jpeg" alt="Trendiify" style="width:150px; height:auto;">
+      <img src="client/public/LOGO3.jpeg" alt="Nexebay" style="width:150px; height:auto;">
     </div>
     
     <h2 style="color:#333; text-align:center;">Hello ${name},</h2>
@@ -19,7 +19,7 @@ const forgotPasswordTemplate = ({ name, otp }) => {
     </div>
     
     <p style="font-size:14px; color:#333; text-align:center;">
-      This OTP is valid for <strong>1 hour</strong>. Enter this OTP on the Binkeyit website to reset your password.
+      This OTP is valid for <strong>1 hour</strong>. Enter this OTP on the Nexebay website to reset your password.
     </p>
     
     <!-- Button -->
@@ -27,7 +27,7 @@ const forgotPasswordTemplate = ({ name, otp }) => {
       <table cellspacing="0" cellpadding="0" border="0" align="center">
         <tr>
           <td align="center" bgcolor="#1e88e5" style="border-radius:5px;">
-            <a href="http://localhost:5173/login" target="_blank" style="display:inline-block; padding:12px 25px; font-size:16px; color:#fff; text-decoration:none; font-weight:bold; border-radius:5px;">
+            <a href="https://nexebay.com/login" target="_blank" style="display:inline-block; padding:12px 25px; font-size:16px; color:#fff; text-decoration:none; font-weight:bold; border-radius:5px;">
               Go to Login
             </a>
           </td>
@@ -37,12 +37,12 @@ const forgotPasswordTemplate = ({ name, otp }) => {
     
     <p style="font-size:14px; color:#555; text-align:center; margin-top:20px;">
       Thanks,<br/>
-      <strong>Trendiify Team</strong>
+      <strong>Nexebay Team</strong>
     </p>
     
     <!-- Footer -->
     <div style="text-align:center; font-size:12px; color:#777; margin-top:30px;">
-      © 2025 Trendiify. All rights reserved.
+      © 2025 Nexebay. All rights reserved.
     </div>
     
   </div>
