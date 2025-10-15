@@ -13,7 +13,8 @@ const sendEmail = async ({ sendTo, subject, html }) => {
     try {
         const { data, error } = await resend.emails.send({
             // ✅ Resend ka default verified sender
-            from: 'onboarding@resend.dev',   
+            from: "Nexebay Support <noreply@nexebay.com>"
+,   
             to: sendTo,
             subject: subject,
             html: html,
